@@ -1,0 +1,58 @@
+// Version 1 nur für Ausgabe über Serial 9600, auskommentiert und enthalten
+// Sketch erstellt von Steve Schutzbier unter CC Creative Common Licence
+// Abänderungen und Erweiterungen gerne, lasst mich doch bitte wissen, was Ihr gezaubert habt!
+// v0.9 20160210 Steve Schutzbier
+// Schallsensor, Arduino UNO R3, 2-zeiliges-LCD-Display, Ponti (für Helligkeitsregelung LCD), Kabel, Breadboard > fertig
+
+#include <LiquidCrystal.h> // meine erste eingebundene Bibliothek
+
+LiquidCrystal lcd(12,11,5,4,3,2); // Anschlüsse LCD
+
+int trigger=7;  //Schallmesser
+int echo=6;  //Schallmesser
+int dauer=0;
+long entfernung=0;
+
+void setup() {
+lcd.begin(16,2);  //16 Zeichen je Zeile, zwei Zeilen, Grundeinstellungen für das LCD
+
+// Serial.begin(9600); // Parallel: Übertragung auf serielle Schnittstelle für den PC möglich!
+
+lcd.print("Hey Steve, los!"); // Dient nur dem Test, dass das LCD korrekt angeschlossen ist! ZEICHENLÄNGE BEACHTEN!
+lcd.setCursor(0,1);  // Cursor in Zeile 2, ganz links
+delay(1000);
+lcd.print("Gutes Gelingen!");  // das sollte nach 1sec in Zeile zwei stehen
+delay (5000);  // in fünf Sekunden geht die Messung los
+lcd.clear();  //LCD wird gelöscht, kein Inhalt mehr!
+
+pinMode(trigger,OUTPUT);
+pinMode(echo,INPUT);
+}
+
+void loop() {
+digitalWrite(trigger,LOW);
+delay(5);
+digitalWrite (trigger,HIGH);
+delay(10);
+digitalWrite(trigger,LOW);
+dauer=pulseIn(echo,HIGH);
+entfernung=(dauer/2)/29,1;
+
+if(entfernung >= 500 || entfernung <=0)
+  {
+    // Serial.println("Zu klein, kein Messwert!");
+    lcd.print("Kein Wert!KLEIN!");
+  }
+else
+  {
+    // Serial.print(entfernung);
+    // Serial.println(" cm");
+    lcd.print(entfernung);
+    lcd.print(" cm");
+    delay(1000);
+    lcd.clear();
+  }
+
+delay(1000);
+
+}
